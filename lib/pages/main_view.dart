@@ -41,7 +41,7 @@ class _MainViewState extends State<MainView> {
                     BlocProvider.of<BottomNavigationCubit>(context).updateTab(index);
                   },
                   type: BottomNavigationBarType.fixed,
-                  selectedItemColor: const Color.fromRGBO(193, 53, 132, 1),
+                  selectedItemColor: Colors.black,
                   unselectedItemColor: Colors.grey,
                   showSelectedLabels: false,
                   showUnselectedLabels: false,
