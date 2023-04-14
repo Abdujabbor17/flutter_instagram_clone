@@ -2,17 +2,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatefulWidget {
-  final PageController? pageController;
+import '../../model/post_model.dart';
+import '../../states.dart';
+import 'components/itemOfPost.dart';
 
-  const HomePage({Key? key, this.pageController}) : super(key: key);
+class HomePage extends StatefulWidget {
+
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -28,18 +31,27 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           IconButton(
-            onPressed: () {
-              widget.pageController!.animateToPage(2,
-                  duration: Duration(microseconds: 200), curve: Curves.easeIn);
-            },
-            icon: Icon(Icons.camera_alt),
-            color: Color.fromRGBO(193, 53, 132, 1),
+            onPressed: () {},
+            icon: const Icon(Icons.camera_alt),
+            color: const Color.fromRGBO(193, 53, 132, 1),
           ),
         ],
       ),
-
+      body: Stack(
+        children: [
+          ListView.builder(
+            itemCount: items.length,
+            itemBuilder: (ctx, index) {
+              return itemOfPost(context, items[index]);
+            },
+          ),
+          isLoading
+              ? const Center(
+            child: CircularProgressIndicator(),
+          )
+              : const SizedBox.shrink(),
+        ],
+      ),
     );
   }
-
-
 }
