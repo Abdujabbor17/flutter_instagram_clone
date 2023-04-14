@@ -71,7 +71,7 @@ class _MyUploadPageState extends State<MyUploadPage> {
                 GestureDetector(
                   onTap: () {
                     showPicker(context);
-                  },
+                     }, 
                   child: Container(
                     width: double.infinity,
                     height: MediaQuery.of(context).size.width,
