@@ -1,16 +1,19 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_instagram_clone/bloc/upload/upload_cubit.dart';
 import 'package:flutter_instagram_clone/pages/auth/signin_page.dart';
 import 'package:flutter_instagram_clone/pages/auth/signup_page.dart';
-import 'package:flutter_instagram_clone/pages/auth/splash_page.dart';
-import 'package:flutter_instagram_clone/pages/home/home_page.dart';
 import 'package:flutter_instagram_clone/pages/main_view.dart';
 
-import 'bloc/main_view/bottom_cubit.dart';
 
 void main() {
   runApp(
-      const MyApp());
+      MultiBlocProvider(
+        providers: [
+          BlocProvider(  create: (context) => UploadCubit())
+        ],
+           child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
