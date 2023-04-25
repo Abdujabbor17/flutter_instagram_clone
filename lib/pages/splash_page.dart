@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../service/auth_service.dart';
+import '../utils/log_service.dart';
+
 
 
 class SplashPage extends StatefulWidget {
@@ -29,7 +32,12 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   _callNextPage(){
-    Navigator.pushReplacementNamed(context, '/SignInPage');
+    Log.i(AuthService.isLoggedIn().toString());
+    if(AuthService.isLoggedIn()){
+      Navigator.pushReplacementNamed(context, '/MainView');
+    }else{
+      Navigator.pushReplacementNamed(context, '/SignInPage');
+    }
   }
 
   @override
