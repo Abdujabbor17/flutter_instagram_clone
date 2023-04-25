@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_instagram_clone/bloc/profile/profile_cubit.dart';
 import 'package:flutter_instagram_clone/bloc/profile/profile_state.dart';
+import 'package:flutter_instagram_clone/service/auth_service.dart';
 import '../../states.dart';
 import '../upload/components/show_picker.dart';
 import 'components/post_item.dart';
@@ -34,7 +35,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
           ),
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                AuthService.signOutUser(context);
+              },
               icon: const Icon(Icons.exit_to_app),
               color: const Color.fromRGBO(193, 53, 132, 1),
             )
