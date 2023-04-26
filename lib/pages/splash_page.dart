@@ -32,7 +32,6 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   _callNextPage(){
-    Log.i(AuthService.isLoggedIn().toString());
     if(AuthService.isLoggedIn()){
       Navigator.pushReplacementNamed(context, '/MainView');
     }else{

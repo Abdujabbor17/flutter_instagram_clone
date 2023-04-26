@@ -18,7 +18,7 @@ Widget itemOfUser(UserModel user) {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(22.5),
-            child: user.imgUrl.isEmpty
+            child: user.imgUrl == null
                 ? const Image(
               image: AssetImage("assets/images/ic_person.png"),
               width: 45,
@@ -26,7 +26,7 @@ Widget itemOfUser(UserModel user) {
               fit: BoxFit.cover,
             )
                 : Image.network(
-              user.imgUrl,
+              user.imgUrl!,
               width: 45,
               height: 45,
               fit: BoxFit.cover,
@@ -41,14 +41,14 @@ Widget itemOfUser(UserModel user) {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              user.fullName,
+              user.fullName ?? '',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(
               height: 3,
             ),
             Text(
-              user.email,
+              user.email ?? '',
               style: const TextStyle(color: Colors.black54),
             ),
           ],

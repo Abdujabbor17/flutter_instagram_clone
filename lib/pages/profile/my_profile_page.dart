@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_instagram_clone/bloc/profile/profile_cubit.dart';
 import 'package:flutter_instagram_clone/bloc/profile/profile_state.dart';
+import 'package:flutter_instagram_clone/model/user_model.dart';
 import 'package:flutter_instagram_clone/service/auth_service.dart';
 import '../../states.dart';
-import '../upload/components/show_picker.dart';
 import 'components/post_item.dart';
+import 'components/show_picker.dart';
 
 
 class MyProfilePage extends StatefulWidget {
@@ -18,9 +19,15 @@ class MyProfilePage extends StatefulWidget {
 
 class _MyProfilePageState extends State<MyProfilePage> {
 
-  bool isLoading = false;
-  String fullName = "", email = "", imgUrl = "";
-  int count_posts = 0, count_followers = 0, count_following = 0;
+
+  UserModel user = UserModel('', '');
+
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<ProfileCubit>(context).getProfileInfo();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,22 +50,29 @@ class _MyProfilePageState extends State<MyProfilePage> {
             )
           ],
         ),
-    body: BlocProvider<ProfileCubit>(
-      create: (_) => ProfileCubit(),
-      child: BlocBuilder<ProfileCubit,ProfileState>(
+    body:  BlocBuilder<ProfileCubit,ProfileState>(
         builder: (BuildContext ctx, state){
+          if(state is ProfileLoading){
+            return viewProfile(ctx,true, user);
+          }
+
+          if(state is ProfileLoad){
+            user = state.user;
+            return viewProfile(ctx,false, user);
+          }
+
           if(state is ProfileInit){
-            return viewProfile(ctx);
+            return viewProfile(ctx, false, user);
           }
 
           return const Center(child: Text('Oops!'),);
         },
       ),
-    )
+
     );
   }
 
-  viewProfile(BuildContext context){
+  viewProfile(BuildContext context,bool isLoading, UserModel user){
     return Stack(
       children: [
         Container(
@@ -69,7 +83,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
               //#myphoto
               GestureDetector(
                   onTap: () {
-                    showPicker(context);
+                    showProfilePicker(context);
                   },
                   child: Stack(
                     children: [
@@ -84,7 +98,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(35),
-                          child: imgUrl.isEmpty
+                          child: user.imgUrl == null
                               ? const Image(
                             image: AssetImage(
                                 "assets/images/ic_person.png"),
@@ -93,7 +107,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             fit: BoxFit.cover,
                           )
                               : CachedNetworkImage(
-                            imageUrl: imgUrl,
+                            imageUrl: user.imgUrl!,
                             width: 70,
                             height: 70,
                             fit: BoxFit.cover,
@@ -122,7 +136,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 height: 10,
               ),
               Text(
-                fullName.toUpperCase(),
+                user.fullName ?? '',
                 style: const TextStyle(
                     color: Colors.black,
                     fontSize: 16,
@@ -132,7 +146,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 height: 3,
               ),
               Text(
-                email,
+                user.email ?? '',
                 style: const TextStyle(
                     color: Colors.black54,
                     fontSize: 14,
@@ -148,18 +162,18 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     Expanded(
                       child: Center(
                         child: Column(
-                          children: [
+                          children: const [
                             Text(
-                              count_posts.toString(),
-                              style: const TextStyle(
+                             '0',
+                              style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold),
                             ),
-                            const SizedBox(
+                            SizedBox(
                               height: 3,
                             ),
-                            const Text(
+                            Text(
                               "POSTS",
                               style: TextStyle(
                                   color: Colors.grey,
@@ -175,7 +189,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         child: Column(
                           children: [
                             Text(
-                              count_followers.toString(),
+                              user.followersCount.toString(),
                               style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 16,
@@ -200,7 +214,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         child: Column(
                           children: [
                             Text(
-                              count_following.toString(),
+                              user.followingCount.toString(),
                               style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 16,
@@ -264,6 +278,11 @@ class _MyProfilePageState extends State<MyProfilePage> {
             ],
           ),
         ),
+        isLoading?
+            const Center(
+              child: CircularProgressIndicator(),
+            ):
+            const SizedBox.shrink()
       ],
     );
   }

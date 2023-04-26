@@ -1,4 +1,3 @@
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +6,8 @@ import 'package:flutter_instagram_clone/pages/auth/signin_page.dart';
 import 'package:flutter_instagram_clone/pages/auth/signup_page.dart';
 import 'package:flutter_instagram_clone/pages/main_view.dart';
 import 'package:flutter_instagram_clone/pages/splash_page.dart';
+import 'bloc/profile/profile_cubit.dart';
+import 'bloc/search/search_cubit.dart';
 
 
 void main() async{
@@ -16,7 +17,9 @@ void main() async{
   runApp(
       MultiBlocProvider(
         providers: [
-          BlocProvider(  create: (context) => UploadCubit())
+          BlocProvider(  create: (context) => UploadCubit()),
+          BlocProvider(  create: (context) => ProfileCubit()),
+          BlocProvider(  create: (context) => SearchCubit()),
         ],
            child: const MyApp()));
 }
