@@ -12,7 +12,6 @@ class UploadCubit extends Cubit<UploadState> {
   void imgFromGallery() async {
     XFile? image =
     await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
-
     emit(UploadLoad(File(image!.path)));
   }
 

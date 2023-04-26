@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_instagram_clone/bloc/search/search_cubit.dart';
+import 'package:flutter_instagram_clone/bloc/search/search_state.dart';
 import 'package:flutter_instagram_clone/model/user_model.dart';
 
 import 'components/item_search.dart';
@@ -12,15 +15,14 @@ class MySearchPage extends StatefulWidget {
 
 class _MySearchPageState extends State<MySearchPage> {
 
-  bool isLoading = false;
   var searchController = TextEditingController();
-  List<UserModel> items = [
-    UserModel('Asadbek', 'asadbek@gmail.com'),
-    UserModel('Bahrom', 'bahrom@gmail.com'),
-    UserModel('Faxriddin', 'faxriddin@gmail.com'),
-    UserModel('Farhod', 'farhod@gmail.com'),
-  ];
+  List<UserModel> users = [];
 
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<SearchCubit>(context).searchUser('');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,24 @@ class _MySearchPageState extends State<MySearchPage> {
                 color: Colors.black, fontFamily: "Billabong", fontSize: 25),
           ),
         ),
-    body: Stack(
+    body: BlocBuilder<SearchCubit,SearchState>(
+      builder: (ctx, state){
+        if(state is SearchLoading){
+          return view(ctx, true);
+        }
+        if(state is SearchLoad){
+          users = state.users;
+          return view(ctx, false);
+        }
+
+        return const Center(child: Text('Oops'));
+      },
+    ),
+    );
+  }
+
+  Widget view(BuildContext context, bool isLoading){
+    return Stack(
       children: [
         Container(
           padding: const EdgeInsets.only(left: 20, right: 20),
@@ -67,9 +86,9 @@ class _MySearchPageState extends State<MySearchPage> {
               //#member list
               Expanded(
                 child: ListView.builder(
-                  itemCount: items.length,
+                  itemCount: users.length,
                   itemBuilder: (ctx, index) {
-                    return itemOfUser(items[index]);
+                    return itemOfUser(users[index]);
                   },
                 ),
               ),
@@ -77,7 +96,6 @@ class _MySearchPageState extends State<MySearchPage> {
           ),
         ),
       ],
-    ),
     );
   }
 }
