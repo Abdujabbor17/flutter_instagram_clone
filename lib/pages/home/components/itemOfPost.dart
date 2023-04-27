@@ -6,6 +6,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../../bloc/home/page_view_cubit.dart';
 import '../../../model/post_model.dart';
+import '../../../utils/log_service.dart';
 
 
 Widget itemOfPost(BuildContext context, Post post) {
@@ -28,7 +29,7 @@ Widget itemOfPost(BuildContext context, Post post) {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(40),
-                        child: post.userImage == null
+                        child: post.imgUser == null
                             ? const Image(
                           image: AssetImage("assets/images/ic_person.png"),
                           width: 40,
@@ -36,7 +37,7 @@ Widget itemOfPost(BuildContext context, Post post) {
                           fit: BoxFit.cover,
                         )
                             : Image.network(
-                          post.userImage! ,
+                          post.imgUser! ,
                           width: 40,
                           height: 40,
                           fit: BoxFit.cover,
@@ -56,9 +57,9 @@ Widget itemOfPost(BuildContext context, Post post) {
                           const SizedBox(
                             height: 3,
                           ),
-                          const Text(
-                            '14.04.2023',
-                            style: TextStyle(fontWeight: FontWeight.normal),
+                           Text(
+                            post.date ?? 'recently',
+                            style: const TextStyle(fontWeight: FontWeight.normal),
                           ),
                         ],
                       ),
@@ -86,11 +87,11 @@ Widget itemOfPost(BuildContext context, Post post) {
                   context.read<ImageCubit>().changeImage(index);
                 },
                 controller: context.watch<ImageCubit>().pageController,
-                itemCount: post.postImage!.length,
+                itemCount: post.imgPosts != null ?  post.imgPosts!.length : 0,
                 itemBuilder: (context,index){
                   return  CachedNetworkImage(
                     width: MediaQuery.of(context).size.width,
-                    imageUrl: post.postImage![index],
+                    imageUrl: post.imgPosts![index],
                     placeholder: (context, url) =>  Shimmer.fromColors(
                         baseColor: Colors.grey,
                         highlightColor: Colors.white,
@@ -141,11 +142,11 @@ Widget itemOfPost(BuildContext context, Post post) {
                     ],
                   ),
                 ),
-                post.postImage!.length > 1 ?
+                (post.imgPosts?.length ?? 0) > 1 ?
                 SmoothPageIndicator(
 
                   controller: context.watch<ImageCubit>().pageController,
-                  count: post.postImage!.length,
+                  count: post.imgPosts!.length,
                   effect: const WormEffect(
                     dotWidth: 10.0,
                     dotHeight: 10.0,

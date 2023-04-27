@@ -1,7 +1,5 @@
 
-
 import 'dart:io';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_instagram_clone/bloc/profile/profile_state.dart';
 import 'package:flutter_instagram_clone/model/user_model.dart';
@@ -23,8 +21,9 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<void> getProfileInfo() async{
     emit(ProfileLoading());
-    var user = await DBService.loadUserModel();
-    emit(ProfileLoad(user: user));
+    var user = await DBService.loadUserInfo();
+    var posts = await DBService.loadPosts();
+    emit(ProfileLoad(user: user, posts: posts));
 
   }
 
@@ -32,12 +31,13 @@ class ProfileCubit extends Cubit<ProfileState> {
     Log.wtf(path);
     emit(ProfileLoading());
     var url = await FileService.uploadUserImage(File(path));
-    UserModel user = await DBService.loadUserModel();
+    UserModel user = await DBService.loadUserInfo();
     user.imgUrl = url;
     await DBService.updateUser(user);
-    UserModel newUser = await DBService.loadUserModel();
+    UserModel newUser = await DBService.loadUserInfo();
 
-    emit(ProfileLoad(user: newUser));
+    var posts = await DBService.loadPosts();
+    emit(ProfileLoad(user: newUser, posts: posts));
 
   }
 
@@ -64,5 +64,4 @@ class ProfileCubit extends Cubit<ProfileState> {
       toastError('Something is wrong');
     }
   }
-
 }

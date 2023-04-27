@@ -5,7 +5,7 @@ import 'package:flutter_instagram_clone/bloc/profile/profile_cubit.dart';
 import 'package:flutter_instagram_clone/bloc/profile/profile_state.dart';
 import 'package:flutter_instagram_clone/model/user_model.dart';
 import 'package:flutter_instagram_clone/service/auth_service.dart';
-import '../../states.dart';
+import '../../model/post_model.dart';
 import 'components/post_item.dart';
 import 'components/show_picker.dart';
 
@@ -21,6 +21,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
 
   UserModel user = UserModel('', '');
+  List<Post> posts = [];
 
   @override
   void initState() {
@@ -53,16 +54,17 @@ class _MyProfilePageState extends State<MyProfilePage> {
     body:  BlocBuilder<ProfileCubit,ProfileState>(
         builder: (BuildContext ctx, state){
           if(state is ProfileLoading){
-            return viewProfile(ctx,true, user);
+            return viewProfile(ctx,true, user,posts);
           }
 
           if(state is ProfileLoad){
             user = state.user;
-            return viewProfile(ctx,false, user);
+            posts = state.posts;
+            return viewProfile(ctx,false, user, posts);
           }
 
           if(state is ProfileInit){
-            return viewProfile(ctx, false, user);
+            return viewProfile(ctx, false, user, posts);
           }
 
           return const Center(child: Text('Oops!'),);
@@ -72,7 +74,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
     );
   }
 
-  viewProfile(BuildContext context,bool isLoading, UserModel user){
+  viewProfile(BuildContext context,bool isLoading, UserModel user, List<Post> posts){
     return Stack(
       children: [
         Container(
@@ -162,18 +164,18 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     Expanded(
                       child: Center(
                         child: Column(
-                          children: const [
+                          children:  [
                             Text(
-                             '0',
-                              style: TextStyle(
+                             posts.length.toString(),
+                              style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 3,
                             ),
-                            Text(
+                            const Text(
                               "POSTS",
                               style: TextStyle(
                                   color: Colors.grey,
@@ -269,9 +271,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: context.watch<ProfileCubit>().axisCount),
-                  itemCount: items.length,
+                  itemCount: posts.length,
                   itemBuilder: (ctx, index) {
-                    return itemOfHomePost(items[index]);
+                    return itemOfHomePost(context, posts[index]);
                   },
                 ),
               ),

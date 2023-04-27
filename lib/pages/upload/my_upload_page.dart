@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_instagram_clone/bloc/main_view/bottom_cubit.dart';
 import 'package:flutter_instagram_clone/bloc/upload/upload_cubit.dart';
 import 'package:flutter_instagram_clone/bloc/upload/upload_state.dart';
 
@@ -17,7 +18,7 @@ class MyUploadPage extends StatefulWidget {
 
 class _MyUploadPageState extends State<MyUploadPage> {
 
-  var captionController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +32,11 @@ class _MyUploadPageState extends State<MyUploadPage> {
           ),
           actions: [
             IconButton(
-              onPressed: () {
+              onPressed: () async {
+               await BlocProvider.of<UploadCubit>(context).addPost();
+               if(BlocProvider.of<UploadCubit>(context).path != null){
+                 BlocProvider.of<BottomNavigationCubit>(context).updateTab(0);
+               }
 
               },
               icon: const Icon(
@@ -41,26 +46,30 @@ class _MyUploadPageState extends State<MyUploadPage> {
             ),
           ],
         ),
-        body: BlocProvider<UploadCubit>(
-          create: (_) => UploadCubit(),
-          child: BlocBuilder<UploadCubit,UploadState>(
+        body: BlocBuilder<UploadCubit,UploadState>(
             builder: (context, state){
               if(state is UploadInit){
-                return viewPage(context,null);
+                return viewPage(context,null,false);
+              }
+
+              if(state is UploadLoading){
+                return viewPage(context,File(context.watch<UploadCubit>().path!),true);
               }
 
               if(state is UploadLoad){
-                return viewPage(context,state.image);
+                return viewPage(context,state.image,false);
               }
+               if(state is UploadSuccess){
+                return viewPage(context,null,false);
+              }
+
               return const Center(child: Text('Nothing'),);
             },
           ),
-        )
-
     );
   }
 
-  Widget viewPage(BuildContext context,File? image){
+  Widget viewPage(BuildContext context,File? image, bool isLoading){
     return Stack(
       children: [
         SingleChildScrollView(
@@ -117,7 +126,7 @@ class _MyUploadPageState extends State<MyUploadPage> {
                 Container(
                   margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
                   child: TextField(
-                    controller: captionController,
+                    controller: context.watch<UploadCubit>().captionController,
                     style: const TextStyle(color: Colors.black),
                     keyboardType: TextInputType.multiline,
                     minLines: 1,
@@ -132,6 +141,11 @@ class _MyUploadPageState extends State<MyUploadPage> {
             ),
           ),
         ),
+        isLoading?
+        const Center(
+          child: CircularProgressIndicator(),
+        ):
+        const SizedBox.shrink()
       ],
     );
   }
