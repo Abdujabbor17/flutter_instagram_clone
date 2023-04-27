@@ -20,3 +20,5 @@ class UploadError extends UploadState{
 class UploadSuccess extends UploadState{
 
 }
+
+class UploadLoading extends UploadState{}
