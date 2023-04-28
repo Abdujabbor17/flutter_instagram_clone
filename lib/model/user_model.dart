@@ -35,4 +35,13 @@ class UserModel {
     'deviceType': deviceType,
     'deviceToken': deviceToken,
   };
+
+
+  @override
+  bool operator ==(Object other) {
+    return other is UserModel && other.uid == uid;
+  }
+
+  @override
+  int get hashCode => uid.hashCode;
 }

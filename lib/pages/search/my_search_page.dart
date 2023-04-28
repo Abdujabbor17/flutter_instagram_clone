@@ -14,7 +14,6 @@ class MySearchPage extends StatefulWidget {
 }
 
 class _MySearchPageState extends State<MySearchPage> {
-
   var searchController = TextEditingController();
   List<UserModel> users = [];
 
@@ -27,33 +26,35 @@ class _MySearchPageState extends State<MySearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          title: const Text(
-            "Search",
-            style: TextStyle(
-                color: Colors.black, fontFamily: "Billabong", fontSize: 25),
-          ),
+        elevation: 0,
+        title: const Text(
+          "Search",
+          style: TextStyle(
+              color: Colors.black, fontFamily: "Billabong", fontSize: 25),
         ),
-    body: BlocBuilder<SearchCubit,SearchState>(
-      builder: (ctx, state){
-        if(state is SearchLoading){
-          return view(ctx, true);
-        }
-        if(state is SearchLoad){
-          users = state.users;
-          return view(ctx, false);
-        }
-
-        return const Center(child: Text('Oops'));
-      },
-    ),
+      ),
+      body: BlocBuilder<SearchCubit, SearchState>(
+        builder: (ctx, state) {
+          if (state is SearchLoading) {
+            return view(ctx, true);
+          }
+          if (state is SearchLoad) {
+            users = state.users;
+            return view(ctx, false);
+          }
+          if (state is SearchInit) {
+            return view(ctx, false);
+          }
+          return const Center(child: Text('Oops'));
+        },
+      ),
     );
   }
 
-  Widget view(BuildContext context, bool isLoading){
+  Widget view(BuildContext context, bool isLoading) {
     return Stack(
       children: [
         Container(
@@ -74,8 +75,7 @@ class _MySearchPageState extends State<MySearchPage> {
                   decoration: const InputDecoration(
                       hintText: "Search",
                       border: InputBorder.none,
-                      hintStyle:
-                      TextStyle(fontSize: 15, color: Colors.grey),
+                      hintStyle: TextStyle(fontSize: 15, color: Colors.grey),
                       icon: Icon(
                         Icons.search,
                         color: Colors.grey,
@@ -88,13 +88,27 @@ class _MySearchPageState extends State<MySearchPage> {
                 child: ListView.builder(
                   itemCount: users.length,
                   itemBuilder: (ctx, index) {
-                    return itemOfUser(users[index]);
+                    return itemOfUser(
+                      users[index],
+                      () {
+                        if (users[index].followed) {
+                          BlocProvider.of<SearchCubit>(context).unFollowUser(users[index]);
+                        } else {
+                          BlocProvider.of<SearchCubit>(context).followUser(users[index]);
+                        }
+                      },
+                    );
                   },
                 ),
               ),
             ],
           ),
         ),
+        isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : const SizedBox.shrink(),
       ],
     );
   }

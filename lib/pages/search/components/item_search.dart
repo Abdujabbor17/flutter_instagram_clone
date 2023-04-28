@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_instagram_clone/model/user_model.dart';
 
-Widget itemOfUser(UserModel user) {
+Widget itemOfUser(UserModel user, void Function() onTap) {
   return SizedBox(
     height: 90,
     child: Row(
@@ -58,13 +58,7 @@ Widget itemOfUser(UserModel user) {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               GestureDetector(
-                onTap: () {
-                  // if (member.followed) {
-                  //   _apiUnFollowMember(member);
-                  // } else {
-                  //   _apiFollowMember(member);
-                  // }
-                },
+                onTap: onTap,
                 child: Container(
                   width: 100,
                   height: 30,

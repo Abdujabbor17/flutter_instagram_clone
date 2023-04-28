@@ -61,7 +61,8 @@ class _HomePageState extends State<HomePage> {
               child: Text('Oops!'),
             );
           },
-        ));
+        )
+    );
   }
 
   Widget viewHome(List<Post> posts, bool isLoading) {
@@ -70,7 +71,16 @@ class _HomePageState extends State<HomePage> {
         ListView.builder(
           itemCount: posts.length,
           itemBuilder: (ctx, index) {
-            return itemOfPost(context, posts[index]);
+            return itemOfPost(context, posts[index],
+                  () {
+                if(posts[index].liked){
+                  BlocProvider.of<HomeCubit>(context).unLikePost(posts[index]);
+                }else{
+                  BlocProvider.of<HomeCubit>(context).likePost(posts[index]);
+                }
+              },
+
+            );
           },
         ),
         isLoading
