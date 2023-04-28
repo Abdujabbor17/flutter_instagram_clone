@@ -6,6 +6,7 @@ import 'package:flutter_instagram_clone/pages/auth/signin_page.dart';
 import 'package:flutter_instagram_clone/pages/auth/signup_page.dart';
 import 'package:flutter_instagram_clone/pages/main_view.dart';
 import 'package:flutter_instagram_clone/pages/splash_page.dart';
+import 'bloc/favorite/like_cubit.dart';
 import 'bloc/home/home_cubit.dart';
 import 'bloc/main_view/bottom_cubit.dart';
 import 'bloc/profile/profile_cubit.dart';
@@ -24,6 +25,7 @@ void main() async{
           BlocProvider(  create: (context) => SearchCubit()),
           BlocProvider(  create: (context) => HomeCubit()),
           BlocProvider(  create: (context) => BottomNavigationCubit()),
+          BlocProvider(  create: (context) => LikeCubit()),
         ],
            child: const MyApp()));
 }

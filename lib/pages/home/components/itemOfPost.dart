@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_instagram_clone/bloc/home/home_cubit.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../../bloc/home/page_view_cubit.dart';
@@ -9,7 +10,7 @@ import '../../../model/post_model.dart';
 import '../../../utils/log_service.dart';
 
 
-Widget itemOfPost(BuildContext context, Post post) {
+Widget itemOfPost(BuildContext context, Post post, void Function() onTapLike) {
   return BlocProvider<ImageCubit>(
     create: (_) => ImageCubit(),
   child: BlocBuilder<ImageCubit, int>(
@@ -69,7 +70,7 @@ Widget itemOfPost(BuildContext context, Post post) {
                       ? IconButton(
                     icon: const Icon(Icons.more_horiz),
                     onPressed: () {
-                      //_dialogRemovePost(post);
+
                     },
                   )
                       : const SizedBox.shrink(),
@@ -80,35 +81,38 @@ Widget itemOfPost(BuildContext context, Post post) {
             const SizedBox(
               height: 8,
             ),
-            SizedBox(
-              height: MediaQuery.of(context).size.width,
-              child: PageView.builder(
-                onPageChanged: (index){
-                  context.read<ImageCubit>().changeImage(index);
-                },
-                controller: context.watch<ImageCubit>().pageController,
-                itemCount: post.imgPosts != null ?  post.imgPosts!.length : 0,
-                itemBuilder: (context,index){
-                  return  CachedNetworkImage(
-                    width: MediaQuery.of(context).size.width,
-                    imageUrl: post.imgPosts![index],
-                    placeholder: (context, url) =>  Shimmer.fromColors(
-                        baseColor: Colors.grey,
-                        highlightColor: Colors.white,
-                        child: Padding(
-                          padding:  const EdgeInsets.all(13),
-                          child: Container(
-                            height: MediaQuery.of(context).size.width,
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                                color: Colors.grey.shade600,
+            InkWell(
+              onDoubleTap: onTapLike,
+              child: SizedBox(
+                height: MediaQuery.of(context).size.width,
+                child: PageView.builder(
+                  onPageChanged: (index){
+                    context.read<ImageCubit>().changeImage(index);
+                  },
+                  controller: context.watch<ImageCubit>().pageController,
+                  itemCount: post.imgPosts != null ?  post.imgPosts!.length : 0,
+                  itemBuilder: (context,index){
+                    return  CachedNetworkImage(
+                      width: MediaQuery.of(context).size.width,
+                      imageUrl: post.imgPosts![index],
+                      placeholder: (context, url) =>  Shimmer.fromColors(
+                          baseColor: Colors.grey,
+                          highlightColor: Colors.white,
+                          child: Padding(
+                            padding:  const EdgeInsets.all(13),
+                            child: Container(
+                              height: MediaQuery.of(context).size.width,
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                  color: Colors.grey.shade600,
+                              ),
                             ),
-                          ),
-                        )),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
-                    fit: BoxFit.cover,
-                  );
-                },
+                          )),
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
+                      fit: BoxFit.cover,
+                    );
+                  },
+                ),
               ),
             ),
             //#like share
@@ -120,10 +124,8 @@ Widget itemOfPost(BuildContext context, Post post) {
                   child: Row(
                     children: [
                       IconButton(
-                        onPressed: () {
-
-                        },
-                        icon: true
+                        onPressed: onTapLike,
+                        icon: post.liked
                             ? const Icon(
                           EvaIcons.heart,
                           color: Colors.red,
