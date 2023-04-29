@@ -36,22 +36,26 @@ Widget itemOfUser(UserModel user, void Function() onTap) {
         const SizedBox(
           width: 15,
         ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              user.fullName ?? '',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(
-              height: 3,
-            ),
-            Text(
-              user.email ?? '',
-              style: const TextStyle(color: Colors.black54),
-            ),
-          ],
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                user.fullName ?? '',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(
+                height: 3,
+              ),
+              Text(
+                user.email ?? '',
+                overflow: TextOverflow.ellipsis,
+                
+                style: const TextStyle(color: Colors.black54),
+              ),
+            ],
+          ),
         ),
         Expanded(
           child: Row(

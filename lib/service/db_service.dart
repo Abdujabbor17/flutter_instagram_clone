@@ -1,5 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_instagram_clone/service/dio_service.dart';
 import 'package:flutter_instagram_clone/utils/log_service.dart';
 import '../model/post_model.dart';
 import '../model/user_model.dart';
@@ -65,7 +67,7 @@ class DBService {
         .collection(folder_users)
         .orderBy("email")
         .startAt([keyword]).get();
-    Log.i(querySnapshot.docs.length.toString());
+    //Log.i(querySnapshot.docs.length.toString());
 
     querySnapshot.docs.forEach((result) {
       UserModel newUser = UserModel.fromJson(result.data());
@@ -120,6 +122,7 @@ class DBService {
 
   static Future<Post> saveFeed(Post post) async {
     String uid = AuthService.currentUserId();
+
     await _firestore
         .collection(folder_users)
         .doc(uid)
@@ -222,6 +225,13 @@ class DBService {
         .doc(me.uid)
         .set(me.toJson());
 
+    await DioService.sendNotification(someone.deviceToken!, me.fullName!)
+        .then((value) {
+      if (kDebugMode) {
+        Log.i(value.toString());
+      }
+    });
+
     return someone;
   }
 
@@ -290,6 +300,17 @@ class DBService {
         .collection(folder_users)
         .doc(uid)
         .collection(folder_feeds)
+        .doc(post.id)
+        .delete();
+  }
+
+  static Future removePost(Post post) async {
+    String uid = AuthService.currentUserId();
+    await removeFeed(post);
+    return await _firestore
+        .collection(folder_users)
+        .doc(uid)
+        .collection(folder_posts)
         .doc(post.id)
         .delete();
   }

@@ -1,9 +1,11 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/main_view/bottom_cubit.dart';
 import '../utils/log_service.dart';
+import '../utils/show_local_notif.dart';
 import 'home/home_page.dart';
 import 'favorite/my_likes_page.dart';
 import 'profile/my_profile_page.dart';
@@ -19,6 +21,22 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> {
 
+
+
+
+  _initNotification(){
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if(mounted) {
+        showLocalNotification(message, context);
+      }
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      if(mounted) {
+        showLocalNotification(message, context);
+      }
+    });
+  }
+
   var list = [
     const HomePage(),
     const MySearchPage(),
@@ -26,6 +44,12 @@ class _MainViewState extends State<MainView> {
     const MyLikesPage(),
     const MyProfilePage(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _initNotification();
+  }
 
   @override
   Widget build(BuildContext context) {

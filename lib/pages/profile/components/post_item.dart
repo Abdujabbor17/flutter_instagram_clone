@@ -7,10 +7,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../bloc/profile/profile_cubit.dart';
 import '../../../model/post_model.dart';
+import '../../../utils/custom_dialog.dart';
 
 Widget itemOfHomePost(BuildContext context, Post post) {
   return GestureDetector(
-      onLongPress: (){},
+      onLongPress: () async {
+
+        var result = await dialogCommon(
+            context, "Insta Clone", "Do you want to remove this post?", false);
+        if (result) {
+          BlocProvider.of<ProfileCubit>(context).removePost(post);
+        }
+      },
       child: Container(
         margin: const EdgeInsets.all(3),
         child: Column(

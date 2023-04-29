@@ -6,6 +6,7 @@ import 'package:flutter_instagram_clone/pages/auth/signin_page.dart';
 import 'package:flutter_instagram_clone/pages/auth/signup_page.dart';
 import 'package:flutter_instagram_clone/pages/main_view.dart';
 import 'package:flutter_instagram_clone/pages/splash_page.dart';
+import 'package:flutter_instagram_clone/service/notif_service.dart';
 import 'bloc/favorite/like_cubit.dart';
 import 'bloc/home/home_cubit.dart';
 import 'bloc/main_view/bottom_cubit.dart';
@@ -15,7 +16,8 @@ import 'bloc/search/search_cubit.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp();
+  await Firebase.initializeApp();
+  await NotifService.init();
 
   runApp(
       MultiBlocProvider(
