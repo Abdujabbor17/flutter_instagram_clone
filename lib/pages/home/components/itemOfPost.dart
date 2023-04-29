@@ -7,6 +7,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../../bloc/home/page_view_cubit.dart';
 import '../../../model/post_model.dart';
+import '../../../utils/custom_dialog.dart';
 import '../../../utils/log_service.dart';
 
 
@@ -66,11 +67,15 @@ Widget itemOfPost(BuildContext context, Post post, void Function() onTapLike) {
                       ),
                     ],
                   ),
-                  true
+                  post.mine
                       ? IconButton(
                     icon: const Icon(Icons.more_horiz),
-                    onPressed: () {
-
+                    onPressed: () async {
+                      var result = await dialogCommon(
+                          context, "Insta Clone", "Do you want to remove this post?", false);
+                      if (result) {
+                        BlocProvider.of<HomeCubit>(context).removePost(post);
+                      }
                     },
                   )
                       : const SizedBox.shrink(),

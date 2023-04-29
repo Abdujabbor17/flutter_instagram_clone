@@ -9,6 +9,8 @@ import 'package:flutter_instagram_clone/utils/log_service.dart';
 import 'package:flutter_instagram_clone/utils/toast.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../model/post_model.dart';
+
 class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit() : super(ProfileInit());
 
@@ -63,5 +65,16 @@ class ProfileCubit extends Cubit<ProfileState> {
     }else{
       toastError('Something is wrong');
     }
+  }
+
+  void removePost(Post post) async {
+    emit(ProfileLoading());
+
+    await DBService.removePost(post);
+    var posts = await DBService.loadFeeds();
+    var user = await DBService.loadUserInfo();
+    emit(ProfileLoad(user: user, posts: posts));
+
+
   }
 }
